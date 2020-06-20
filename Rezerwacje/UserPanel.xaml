@@ -1,0 +1,82 @@
+﻿<Window x:Class="Rezerwacje.UserPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Rezerwacje"
+        mc:Ignorable="d"
+        Title="UserPanel" Height="712.317" Width="638.659">
+    
+    <Window.Resources>
+        <CollectionViewSource x:Key="CvsKey">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Country"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+    
+    <Grid Margin="0,0,2,0">
+        
+        <DataGrid HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" 
+                  Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                  Name="DG1"  HorizontalAlignment="Left" Height="600" Margin="10,62,0,0" 
+		VerticalAlignment="Top" Width="424"  IsReadOnly="true" >
+            <DataGrid.Columns>
+                <!--<DataGridTemplateColumn Header="Nr Pokoju"  Width="75">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding roomNr}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+                <DataGridTextColumn Header="Nr Pokoju" Binding="{Binding roomNr}" Width="75"/>
+                
+                <DataGridTemplateColumn Header="Reservations"  Width="260" >
+                    <DataGridTemplateColumn.CellTemplate> 
+                        <DataTemplate>
+                            <DataGrid x:Name="DG2" ItemsSource="{Binding reservations}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="None"  >
+                                <DataGrid.Columns>
+                                    
+                                    <DataGridTemplateColumn Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <TextBlock Text="{Binding }" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Wolne Miejsca" Binding="{Binding roomNow}" Width="90"/>
+                <!--<DataGridTemplateColumn Header="Wolne Miejsca"  Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding roomNow}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+                
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Label Content="Label" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="57" Width="424" FontWeight="Bold" FontSize="40"/>
+        <Calendar x:Name="CalendarDate" HorizontalAlignment="Left" Margin="444,62,0,0" VerticalAlignment="Top" Height="173" Width="176"/>
+        <Button x:Name="ButtonAdd" Content="Dodaj Rezerwację" HorizontalAlignment="Left" Margin="439,240,0,0" VerticalAlignment="Top" Width="180" Height="50" Click="ButtonAdd_Click"/>
+        <Button x:Name="ButtonEdit" Content="Edytuj/Usuń Rezerwację" HorizontalAlignment="Left" Margin="439,295,0,0" VerticalAlignment="Top" Width="180" Height="50"/>
+        <Label Content="Aktywna sesja:" HorizontalAlignment="Left" Margin="439,610,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelActiveUser" Content="" HorizontalAlignment="Left" Margin="439,636,0,0" VerticalAlignment="Top" Width="180" Foreground="#FF1F0AFB"/>
+        <Label x:Name="LabelReservationByUser" Content="" HorizontalAlignment="Left" Margin="439,579,0,0" VerticalAlignment="Top" Foreground="#FF17FF00"/>
+        <Label x:Name="LabelReservationByText" Content="Rezerwacja dodana przez:" HorizontalAlignment="Left" Margin="439,548,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>
