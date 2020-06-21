@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Rezerwacje"
         mc:Ignorable="d"
-        Title="MainWindow" Height="198.175" Width="194.525">
+        Title="MainWindow" Height="203.649" Width="197.81">
     <Grid Margin="0,0,2,0">
         <Label Content="Login:" HorizontalAlignment="Left" Margin="8,15,0,0" VerticalAlignment="Top"/>
         <Label Content="Hasło:" HorizontalAlignment="Left" Margin="8,56,0,0" VerticalAlignment="Top"/>

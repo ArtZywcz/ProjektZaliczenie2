@@ -25,8 +25,7 @@ namespace Rezerwacje {
             //UserPanel w2 = new UserPanel();
             //w2.Show();
 
-            AddReservation w3 = new AddReservation();
-            w3.Show();
+            
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e) {

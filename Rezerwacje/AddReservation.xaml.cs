@@ -17,9 +17,15 @@ namespace Rezerwacje {
     /// Interaction logic for AddReservation.xaml
     /// </summary>
     public partial class AddReservation : Window {
-        public AddReservation() {
-            InitializeComponent();
 
+        int loggedUserID;
+        DateTime date;
+        UserPanel w2;
+        public AddReservation(int id, DateTime resDate, UserPanel w) {
+            InitializeComponent();
+            loggedUserID = id;
+            date = resDate;
+            w2 = w;
             for(int i = 1; i <=16; i++) ComboBoxRoom.Items.Add(i); //Dodaje pokoje do comboBoxa
 
         }
@@ -27,16 +33,13 @@ namespace Rezerwacje {
         private void ComboBoxRoom_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBoxSlots.Items.Clear();
-            for (int i = 1; i <= 16; i++) ComboBoxSlots.Items.Add(i); //TODO zmienna ilość miejsc w pokojach
+            Database sql = new Database();
+            Rooms room = sql.getRoomData(ComboBoxRoom.SelectedIndex+1, date);
+
+            for (int i = 1; i <= room.roomNow; i++) ComboBoxSlots.Items.Add(i); //TODO zmienna ilość miejsc w pokojach
             ComboBoxSlots.IsEnabled = true;
         }
 
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) 
-        {
-            LabelNumber.Content = SliderNumber.Value; //TODO XDDD Usuń to i zrób normalne
-
-            //TODO po wybraniu ilości osób w pokoju oblicz cenę i zadatek
-        }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
@@ -46,12 +49,72 @@ namespace Rezerwacje {
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
             //TODO Sprawdź czy dane się zgadzają
+            bool allgood = true;
+            if (TextSurname.Text == "") { TextSurname.BorderBrush = Brushes.Red; allgood = false; }
+            if (TextPhone.Text == "") {TextPhone.BorderBrush = Brushes.Red; allgood = false; }
+            if (ComboBoxSlots.SelectedItem == null) {ComboBoxSlots.BorderBrush = Brushes.Red; allgood = false; }
+            if (!allgood) return;
+
+
+
 
             //TODO Dodaj do bazy
+            string[] reservation = new string[7];
+            reservation[0] = TextName.Text;
+            reservation[1] = TextSurname.Text;
+            reservation[2] = ComboBoxRoom.Text;
+            reservation[3] = ComboBoxSlots.Text;
+            reservation[4] = TextPhone.Text;
+            reservation[5] = loggedUserID.ToString();
+            reservation[6] = date.Date.ToString("yyyy-MM-dd");
+            
+            Database sql = new Database();
+            sql.addReservation(reservation);
 
-            //TODO? Wyświetl podsumowanie jak się zgadza
+            w2.getReservations();
+            
+            this.Close();
+}
 
-            //TODO Jak się zgadza to zamknij
+        private void ComboBoxSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBoxSlots.BorderBrush = TextName.BorderBrush;
+
+            if (ComboBoxRoom.SelectedItem == null) return;
+            int room = int.Parse(ComboBoxRoom.SelectedItem.ToString());
+            Database sql = new Database();
+
+            var roomPrice = sql.getRoomPrice(room);
+            roomPrice = roomPrice * (ComboBoxSlots.SelectedIndex + 1);
+            int discount = ComboBoxDiscount.SelectedIndex;
+            double x;
+            switch (discount)
+            {
+                case -1:
+                    x = 1;
+                    break;
+                case 2:
+                    x = 0.5;
+                    break;
+                default:
+                    x = 0.8;
+                    break;
+            }
+
+            LabelPrice.Content = Math.Round(roomPrice * x,2).ToString("N2") + " zł";
+            LabelAdvance.Content = Math.Round((roomPrice * x)/ 2,2).ToString("N2") + " zł";
+
+
+        }
+
+        private void TextPhone_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextPhone.BorderBrush = TextName.BorderBrush;
+        }
+
+        private void TextPhone_DataContextChanged_1(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            TextPhone.BorderBrush = Brushes.Transparent;
         }
     }
 }

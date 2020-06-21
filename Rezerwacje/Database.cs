@@ -172,5 +172,69 @@ namespace Rezerwacje {
             return result;
 
         }
+
+        public void addReservation(string[] reservation) 
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("INSERT INTO Reservations VALUES ('");
+            sb.Append(reservation[6]);
+            sb.Append("','");
+            sb.Append(reservation[0]);//IMIE
+            sb.Append("','");
+            sb.Append(reservation[1]);//NAZWISKO
+            sb.Append("',");
+            sb.Append(reservation[2]);//IDPOKOJU
+            sb.Append(",");
+            sb.Append(reservation[3]);//ILOŚĆ MIEJSC
+            sb.Append(",'");
+            sb.Append(reservation[4]);//NR TELEFONU
+            sb.Append("',");
+            sb.Append(reservation[5]);//ID PRACOWNIKA
+            sb.Append(");");
+
+            string com = sb.ToString();
+            connection.Open();
+            SqlCommand command = new SqlCommand(com, connection);
+
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+
+        public int getRoomPrice(int id)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Select Price FROM Rooms where RoomID = ");
+            sb.Append(id);
+            sb.Append(";");
+
+            string com = sb.ToString();
+            connection.Open();
+            SqlCommand command = new SqlCommand(com, connection);
+
+            int result = (int)command.ExecuteScalar();
+            connection.Close();
+            return result;
+        }
+
+        public void removeReservation(string[] reservation)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("DELETE FROM Reservations WHERE Date = '");
+            sb.Append(reservation[4]);
+            sb.Append("' AND Name = '");
+            sb.Append(reservation[1]);
+            sb.Append("' AND Surname = '");
+            sb.Append(reservation[2]);
+            sb.Append("' AND PhoneNumber = '");
+            sb.Append(reservation[3]);
+            sb.Append("' AND SlotsQuantity = ");
+            sb.Append(reservation[0]);
+            sb.Append(";");
+
+            string com = sb.ToString();
+            connection.Open();
+            SqlCommand command = new SqlCommand(com, connection);
+            command.ExecuteNonQuery();
+        }
     }
 }

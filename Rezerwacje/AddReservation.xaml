@@ -5,25 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Rezerwacje"
         mc:Ignorable="d"
-        Title="AddReservation" Height="340.666" Width="368.404">
+        Title="AddReservation" Height="350.905" Width="239.956">
 
 
-    <Grid>
-        <Label Content="Nazwisko" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="118"/>
-        <Label Content="Pokój" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="75"/>
-        <Label Content="Ilość Miejsc" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="95,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <ComboBox x:Name="ComboBoxRoom" HorizontalAlignment="Left" Margin="95,45,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ComboBoxRoom_SelectionChanged"/>
-        <ComboBox x:Name="ComboBoxSlots" HorizontalAlignment="Left" Margin="95,76,0,0" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-        <Label Content="Numer Tel" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="75"/>
+    <Grid Margin="0,0,2,0">
+        <Label Content="Nazwisko" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" Width="118"/>
+        <Label Content="Pokój" HorizontalAlignment="Left" Margin="10,75,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label Content="Ilość Miejsc" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="TextSurname" HorizontalAlignment="Left" Height="23" Margin="95,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="ComboBoxRoom" HorizontalAlignment="Left" Margin="95,79,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ComboBoxRoom_SelectionChanged"/>
+        <ComboBox x:Name="ComboBoxSlots" HorizontalAlignment="Left" Margin="95,110,0,0" VerticalAlignment="Top" Width="120" IsEnabled="False" SelectionChanged="ComboBoxSlots_SelectionChanged"/>
+        <Label Content="Numer Tel" HorizontalAlignment="Left" Margin="10,137,0,0" VerticalAlignment="Top" Width="75"/>
         <Label Content="Zaliczka" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="75"/>
         <Label Content="Cena" HorizontalAlignment="Left" Margin="10,214,0,0" VerticalAlignment="Top" Width="75"/>
-        <Label Content="Zniżka" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label Content="Zniżka" HorizontalAlignment="Left" Margin="10,168,0,0" VerticalAlignment="Top" Width="75"/>
         <Button x:Name="ButtonCancel" Content="Anuluj" HorizontalAlignment="Left" Margin="10,280,0,0" VerticalAlignment="Top" Width="100" IsCancel="True" Click="ButtonCancel_Click"/>
         <Button x:Name="ButtonAdd" Content="Dodaj" HorizontalAlignment="Left" Margin="115,280,0,0" VerticalAlignment="Top" Width="100" RenderTransformOrigin="0.929,0.548" IsDefault="True" Click="ButtonAdd_Click"/>
-        <Slider x:Name="SliderNumber" HorizontalAlignment="Left" Margin="95,103,0,0" VerticalAlignment="Top" Width="120" Maximum="999999999" ValueChanged="Slider_ValueChanged" SmallChange="1" IsSnapToTickEnabled="True"/>
-        <Label x:Name="LabelNumber"  Content="" HorizontalAlignment="Left" Margin="215,103,0,0" VerticalAlignment="Top" Width="139"/>
-        <ComboBox x:Name="ComboBoxDiscount" HorizontalAlignment="Left" Margin="95,134,0,0" VerticalAlignment="Top" Width="120">
+        <ComboBox x:Name="ComboBoxDiscount" HorizontalAlignment="Left" Margin="95,168,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ComboBoxSlots_SelectionChanged">
             <!--TODO? ComboBox z bazy danych? -->
             <ComboBoxItem Content="Karta Dużej Rodziny"/>
             <ComboBoxItem Content="PTTK Legitymacja"/>
@@ -33,5 +31,8 @@
         </ComboBox>
         <Label x:Name="LabelPrice" Content="" HorizontalAlignment="Left" Margin="90,214,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelAdvance" Content="" HorizontalAlignment="Left" Margin="90,245,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TextPhone" HorizontalAlignment="Left" Height="23" Margin="95,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotFocus="TextPhone_GotFocus" DataContextChanged="TextPhone_DataContextChanged_1"/>
+        <Label Content="Imie" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Width="118"/>
+        <TextBox x:Name="TextName" HorizontalAlignment="Left" Height="23" Margin="95,19,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>

@@ -59,11 +59,18 @@
       <DependentUpon>AddReservation.xaml</DependentUpon>
     </Compile>
     <Compile Include="Database.cs" />
+    <Compile Include="EditReservation.xaml.cs">
+      <DependentUpon>EditReservation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Rooms.cs" />
     <Compile Include="UserPanel.xaml.cs">
       <DependentUpon>UserPanel.xaml</DependentUpon>
     </Compile>
     <Page Include="AddReservation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditReservation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
