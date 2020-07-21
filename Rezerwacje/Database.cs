@@ -1,21 +1,23 @@
-﻿using System;
+﻿using Rezerwacje.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Rezerwacje.dataContext;
 
 namespace Rezerwacje {
     class Database {
-
+        
         static string connectionString = "Data Source=DESKTOP-7TDH2OL\\SQLEXPRESS;Initial Catalog = MountainHut; Integrated Security = SSPI";
         SqlConnection connection = new SqlConnection(connectionString);
 
 
         public string[] getUserData(string login, string password) {
 
-            StringBuilder sb = new StringBuilder();
+            /*StringBuilder sb = new StringBuilder();
 
             sb.Append("SELECT * FROM Employees WHERE EmployeeLogin = '");
             sb.Append(login);
@@ -48,7 +50,16 @@ namespace Rezerwacje {
 
             connection.Close();
 
-            return list;
+            return list;*/
+
+            using (var db = new MountainHutContext()) {
+                var test = db.Employees
+                    .Where(e => e.EmployeeLogin == login && e.EmployeePassword == password)
+                    .ToList();
+
+
+                return null;
+            }
         }
 
         public Rooms getRoomData(int roomId, DateTime date){
@@ -236,5 +247,8 @@ namespace Rezerwacje {
             SqlCommand command = new SqlCommand(com, connection);
             command.ExecuteNonQuery();
         }
+
+        
     }
+
 }
