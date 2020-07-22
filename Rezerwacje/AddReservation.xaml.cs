@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rezerwacje.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -59,15 +60,17 @@ namespace Rezerwacje {
 
 
             //TODO Dodaj do bazy
-            string[] reservation = new string[7];
-            reservation[0] = TextName.Text;
-            reservation[1] = TextSurname.Text;
-            reservation[2] = ComboBoxRoom.Text;
-            reservation[3] = ComboBoxSlots.Text;
-            reservation[4] = TextPhone.Text;
-            reservation[5] = loggedUserID.ToString();
-            reservation[6] = date.Date.ToString("yyyy-MM-dd");
+            Reservations reservation = new Reservations();
+            reservation.Name = TextName.Text;
+            reservation.Surname = TextSurname.Text;
+            reservation.RoomId = int.Parse(ComboBoxRoom.Text);
+            reservation.SlotsQuantity = int.Parse(ComboBoxSlots.Text);
+            reservation.PhoneNumber = TextPhone.Text;
+            reservation.EmployeeId = loggedUserID;
+            reservation.Date = date.Date;
+
             
+
             Database sql = new Database();
             sql.addReservation(reservation);
 
@@ -95,6 +98,9 @@ namespace Rezerwacje {
                     break;
                 case 2:
                     x = 0.5;
+                    break;
+                case 4:
+                    x = 1;
                     break;
                 default:
                     x = 0.8;

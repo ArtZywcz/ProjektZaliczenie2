@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rezerwacje.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -18,30 +19,26 @@ namespace Rezerwacje {
     /// Interaction logic for UserPanel.xaml
     /// </summary>
     public partial class UserPanel : Window {
-        public string[] loggedInUser;
+        public Employees loggedInUser;
         string myObject;
-        public UserPanel(string[] loggedUser) {
+        public UserPanel(Employees loggedUser) {
 
             
             InitializeComponent();
             loggedInUser = loggedUser;
 
-            LabelActiveUser.Content = loggedUser[1] + ' ' + loggedUser[2]; //pokazywanie kto jest zalogowany
+            LabelActiveUser.Content = loggedUser.Name + ' ' + loggedUser.Surname; //pokazywanie kto jest zalogowany
 
-            string s = Convert.ToString(Int32.Parse(loggedUser[9]), 2); //Convert to binary in a string
+            var priviliges = Convert.ToString(loggedInUser.Priviliges, 2).Select(s => s.Equals('1')).ToArray();
 
-            int[] priviliges = s
-                         .Select(c => int.Parse(c.ToString())) // convert each char to int
-                         .ToArray(); // Convert IEnumerable from select to Array
-
-            if (priviliges[1] == 0)
+            if (priviliges[1] == false)
             {
                 ButtonAdd.Visibility = Visibility.Hidden;
                 ButtonEdit.Visibility = Visibility.Hidden;
 
             }
 
-            if (priviliges[0] == 0)
+            if (priviliges[0] == false)
             {
                 LabelReservationByText.Visibility = Visibility.Hidden;
                 LabelReservationByUser.Visibility = Visibility.Hidden;
@@ -56,7 +53,7 @@ namespace Rezerwacje {
             if (dateOrNull != null)
             {
                 DateTime date = dateOrNull.Value;
-                AddReservation w3 = new AddReservation(int.Parse(loggedInUser[0]), date, this);
+                AddReservation w3 = new AddReservation(loggedInUser.EmployeeId, date, this);
                 w3.Show();
             }
                 
@@ -78,9 +75,9 @@ namespace Rezerwacje {
             }
             reservationDetail[0] = reservationDetail[0].Substring(0, reservationDetail[0].Length - 2);
             Database sql = new Database();
-            string[] employee = sql.getEmployeeDetails(reservationDetail);
+            Employees employee = sql.getEmployeeDetails(reservationDetail, CalendarDate.SelectedDate);
 
-            LabelReservationByUser.Content = employee[0] + ' ' + employee[1];
+            LabelReservationByUser.Content = employee.Name + ' ' + employee.Surname;
 
 
 
@@ -119,23 +116,31 @@ namespace Rezerwacje {
         {
             if (myObject == null) return;
 
+            Reservations reservation = new Reservations();
+            reservation.Date = CalendarDate.SelectedDate ?? DateTime.Now;
+
             string[] reservationDetail = myObject.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
             if (reservationDetail.Length == 3)
             {
                 Array.Resize(ref reservationDetail, reservationDetail.Length + 1);
                 reservationDetail[3] = reservationDetail[2];
                 reservationDetail[2] = reservationDetail[1];
                 reservationDetail[1] = "";
-            }
-            Array.Resize(ref reservationDetail, reservationDetail.Length + 1);
-            reservationDetail[0] = reservationDetail[0].Substring(0, reservationDetail[0].Length - 2);
-            DateTime data;
-            data = CalendarDate.SelectedDate ?? DateTime.Now;
-            labelDate.Content = data.DayOfWeek.ToString() + " " + data.ToString("dd-MM-yyyy");
-            reservationDetail[4] = data.Date.ToString("yyyy-MM-dd");
 
-            EditReservation w3 = new EditReservation(reservationDetail, int.Parse(loggedInUser[0]),data, this);
+            }
+
+            reservation.Name = reservationDetail[1];
+            reservation.Surname = reservationDetail[2];
+            reservation.PhoneNumber = reservationDetail[3];
+
+            reservationDetail[0] = reservationDetail[0].Substring(0, reservationDetail[0].Length - 2);
+            reservation.SlotsQuantity = int.Parse(reservationDetail[0]);
+
+
+            EditReservation w3 = new EditReservation(reservation, loggedInUser.EmployeeId, CalendarDate.SelectedDate ?? DateTime.Now, this);
             w3.Show();
+            myObject = null;
 
         }
     }

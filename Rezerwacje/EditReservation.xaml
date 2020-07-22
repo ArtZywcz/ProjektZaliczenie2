@@ -27,7 +27,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Button Content="Usuń" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="83" Height="25" FontWeight="Bold" Foreground="#FFF00303" Click="Button_Click"/>
-            <Button Content="Cofnij" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="83" Height="24"/>
+            <Button Content="Cofnij" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="83" Height="24" Click="Button_Click_1"/>
             <Button x:Name="ButtonSave" Content="Zapisz" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="82" Height="24" Click="ButtonSave_Click"/>
         </Grid>
 

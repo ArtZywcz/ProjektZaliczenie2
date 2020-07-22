@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rezerwacje.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,29 +23,29 @@ namespace Rezerwacje
         DateTime date;
         int loggedUserID;
         UserPanel w2;
-        string[] resData;
-        public EditReservation(string[] reservation, int id, DateTime x, UserPanel w)
+        Reservations resData;
+        public EditReservation(Reservations reservation, int id, DateTime x, UserPanel w)
         {
             loggedUserID = id;
             date = x;
             w2 = w;
             resData = reservation;
             InitializeComponent();
-            TextName.Text = reservation[1];
-            TextSurname.Text = reservation[2];
-            TextPhone.Text = reservation[3];
+            TextName.Text = reservation.Name;
+            TextSurname.Text = reservation.Surname;
+            TextPhone.Text = reservation.PhoneNumber;
 
             for (int i = 1; i <= 16; i++) ComboBoxRoom.Items.Add(i); //Dodaje pokoje do comboBoxa
-            
 
             Database sql = new Database();
-            sql.removeReservation(reservation);
+            
         }
 
         private void ComboBoxRoom_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBoxSlots.Items.Clear();
             Database sql = new Database();
+            sql.removeReservation(resData);
+            ComboBoxSlots.Items.Clear();
             Rooms room = sql.getRoomData(ComboBoxRoom.SelectedIndex + 1, date);
 
             for (int i = 1; i <= room.roomNow; i++) ComboBoxSlots.Items.Add(i); //TODO zmienna ilość miejsc w pokojach
@@ -60,14 +61,16 @@ namespace Rezerwacje
             if (!allgood) return;
 
 
-            string[] reservation = new string[7];
-            reservation[0] = TextName.Text;
-            reservation[1] = TextSurname.Text;
-            reservation[2] = ComboBoxRoom.Text;
-            reservation[3] = ComboBoxSlots.Text;
-            reservation[4] = TextPhone.Text;
-            reservation[5] = loggedUserID.ToString();
-            reservation[6] = date.Date.ToString("yyyy-MM-dd");
+            Reservations reservation = new Reservations();
+            reservation.Name = TextName.Text;
+            reservation.Surname = TextSurname.Text;
+            reservation.RoomId = int.Parse(ComboBoxRoom.Text);
+            reservation.SlotsQuantity = int.Parse(ComboBoxSlots.Text);
+            reservation.PhoneNumber = TextPhone.Text;
+            reservation.EmployeeId = loggedUserID;
+            reservation.Date = date.Date;
+
+
 
             Database sql = new Database();
             sql.addReservation(reservation);
@@ -85,6 +88,10 @@ namespace Rezerwacje
 
             w2.getReservations();
 
+            this.Close();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e) {
             this.Close();
         }
     }

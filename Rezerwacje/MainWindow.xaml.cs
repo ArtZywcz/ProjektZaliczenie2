@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
+using Rezerwacje.Models;
 
 namespace Rezerwacje {
     /// <summary>
@@ -40,7 +41,7 @@ namespace Rezerwacje {
             if (Sql.getUserData(BoxLogin.Text, BoxPassword.Password) == null) LabelError.Visibility = Visibility.Visible;
             else
             {
-                string[] loggedUser = Sql.getUserData(BoxLogin.Text, BoxPassword.Password);
+                Employees loggedUser = Sql.getUserData(BoxLogin.Text, BoxPassword.Password);
                 UserPanel w2 = new UserPanel(loggedUser);
                 w2.Show();
                 this.Close();

@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Rezerwacje.dataContext;
 
 namespace Rezerwacje {
     class Database {
@@ -15,237 +14,105 @@ namespace Rezerwacje {
         SqlConnection connection = new SqlConnection(connectionString);
 
 
-        public string[] getUserData(string login, string password) {
+        public Employees getUserData(string login, string password) {
 
-            /*StringBuilder sb = new StringBuilder();
-
-            sb.Append("SELECT * FROM Employees WHERE EmployeeLogin = '");
-            sb.Append(login);
-            sb.Append("' AND EmployeePassword = '");
-            sb.Append(password);
-            sb.Append("';");
-
-            string com = sb.ToString();
-
-            connection.Open();
-            SqlCommand command = new SqlCommand(com, connection);
-
-
-            if (command.ExecuteScalar() == null) {
-                connection.Close();
-                return null; 
-            }
-
-
-            string[] list;
-
-            using (SqlDataReader reader = command.ExecuteReader())
-            {
-                list = new string[reader.FieldCount];
-                while (reader.Read())
-                {
-                    for (int i = 0; i<reader.FieldCount; i++) list[i] = reader.GetValue(i).ToString();
-                }
-            }
-
-            connection.Close();
-
-            return list;*/
 
             using (var db = new MountainHutContext()) {
                 var test = db.Employees
                     .Where(e => e.EmployeeLogin == login && e.EmployeePassword == password)
                     .ToList();
 
-
-                return null;
+                if (test.Count == 0) return null;
+                return test[0];
             }
         }
 
         public Rooms getRoomData(int roomId, DateTime date){
-            //Rezerwacje do tablicy stringów start
-            string[] reservationList;
             int slotsOccupied = 0;
-
-            //liczy kolumny
-            StringBuilder sb = new StringBuilder(); 
-            sb.Append("SELECT COUNT(*) FROM Reservations WHERE RoomID = '");
-            sb.Append(roomId);
-            sb.Append("' AND Date = '");
-            sb.Append(date.ToString("yyyy/MM/dd"));
-            sb.Append("';");
-
-            string com = sb.ToString();
-            connection.Open();
-            SqlCommand command = new SqlCommand(com, connection);
-
-
-            int rowCount = (int)command.ExecuteScalar();
-            //if (command.ExecuteScalar() == null) rowCount = 0;
-            //else rowCount = (int)command.ExecuteScalar();
-
-            connection.Close();
-
-            if (rowCount == 0) { //Nie ma rezerwacji w tym dniu
-                StringBuilder sb3 = new StringBuilder();
-
-                sb3.Append("SELECT MaxCapacity FROM Rooms WHERE RoomID = '");
-                sb3.Append(roomId);
-                sb3.Append("';");
-
-                string com3 = sb3.ToString();
-                connection.Open();
-                SqlCommand command3 = new SqlCommand(com3, connection);
-
-                int maxCapacity = (int)command3.ExecuteScalar();
-                connection.Close();
-                return new Rooms(roomId, maxCapacity, new string[] { }, 0); 
-            }
-            //koniec liczenia kolumn
-
-            //Pobiera konkretne kolumny
-            StringBuilder sb1 = new StringBuilder();
-            sb1.Append("SELECT * FROM Reservations WHERE RoomID = '"); 
-            sb1.Append(roomId);
-            sb1.Append("' AND Date = '");
-            sb1.Append(date.ToString("yyyy/MM/dd"));
-            sb1.Append("';");
-
-            string com1 = sb1.ToString();
-            connection.Open();
-            SqlCommand command1 = new SqlCommand(com1, connection);
-
-            using (SqlDataReader reader = command1.ExecuteReader())
-            {
-                reservationList = new string[rowCount]; 
-                for (int i = 0; reader.Read(); i++)
-                {
-                    reservationList[i] = reader.GetInt32(5) + "os " + reader.GetString(2) + ' ' + reader.GetString(3) + ' ' + reader.GetString(6);
-                    slotsOccupied += reader.GetInt32(5);
-                }
-            }
-            connection.Close();
-            //Rezerwacje do tablicy stringów koniec
-
-            //Info o pokoju i rezerwacajch do klasy Rooms start
-            StringBuilder sb2 = new StringBuilder();
-
-            sb2.Append("SELECT * FROM Rooms WHERE RoomID = '");
-            sb2.Append(roomId);
-            sb2.Append("';");
-
-            string com2 = sb2.ToString();
-            connection.Open();
-            SqlCommand command2 = new SqlCommand(com2, connection);
-
-            
+            string[] reservationList;
             Rooms thisRoom;
+            using (var db = new MountainHutContext()) {
+                var test = db.Reservations
+                    .Where(r => r.RoomId == roomId  && r.Date == date)
+                    .ToList();
 
-            using (SqlDataReader reader = command2.ExecuteReader())
-            {
-                reader.Read();
-                thisRoom = new Rooms((int)reader.GetValue(0), (int)reader.GetValue(1), reservationList, slotsOccupied);
-    
-            }
-            connection.Close();
-            //Info o pokoju i rezerwacajch do klasy Rooms koniec
+                int maxCapacity = db.Rooms
+                        .Where(r => r.RoomId == roomId)
+                        .Select(r => r.MaxCapacity)
+                        .SingleOrDefault();
 
+                if (test.Count == 0) {
+                    
 
-            return thisRoom;
-        }
+                    return new Rooms(roomId, maxCapacity, new string[] { }, 0);
+                }
 
-        public string[] getEmployeeDetails(string[] reservation)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("SELECT e.Name, e.Surname FROM Employees e INNER JOIN Reservations r ON r.EmployeeID = e.EmployeeID WHERE r.Name = '");
-            sb.Append(reservation[1]);
-            sb.Append("' AND r.Surname = '");
-            sb.Append(reservation[2]);
-            sb.Append("' AND r.SlotsQuantity = '");
-            sb.Append(reservation[0]);
-            sb.Append("' AND r.PhoneNumber = '");
-            sb.Append(reservation[3]);
-            sb.Append("';");
-
-            string com = sb.ToString();
-            connection.Open();
-            SqlCommand command = new SqlCommand(com, connection);
-            string[] result = new string[2];
-            using (SqlDataReader reader = command.ExecuteReader())
-            {
-                reader.Read();
-                result[0] = reader.GetString(0);
-                result[1] = reader.GetString(1);
+                reservationList = new string[test.Count];
+                for (int i = 0; i<test.Count; i++) {
+                    reservationList[i] = test[i].SlotsQuantity + "os " + test[i].Name + ' ' + test[i].Surname + ' ' + test[i].PhoneNumber;
+                    slotsOccupied += test[i].SlotsQuantity;
+                }
                 
+                thisRoom = new Rooms(test[0].RoomId, maxCapacity, reservationList, slotsOccupied);
+                return thisRoom;
             }
-            connection.Close();
+            
+        }
 
-            return result;
+        public Employees getEmployeeDetails(string[] reservation, DateTime? date) {
+            using (var db = new MountainHutContext()) {
+                var test = db.Reservations.Join(db.Employees, r => r.EmployeeId, e => e.EmployeeId, (r,e) => new {r,e})
+                    .Where(re => re.r.Name == reservation[1] && re.r.Date == date && re.r.Surname == reservation[2] && re.r.SlotsQuantity == int.Parse(reservation[0]) && re.r.PhoneNumber == reservation[3])
+                    .Select(em => new { em.e.Name, em.e.Surname })
+                    .ToList();
+
+                Employees thisGuy = new Employees();
+                thisGuy.Name = test[0].Name;
+                thisGuy.Surname = test[0].Surname;
+
+                return thisGuy;
+            }
+
+
 
         }
 
-        public void addReservation(string[] reservation) 
+        public void addReservation(Reservations reservation) 
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("INSERT INTO Reservations VALUES ('");
-            sb.Append(reservation[6]);
-            sb.Append("','");
-            sb.Append(reservation[0]);//IMIE
-            sb.Append("','");
-            sb.Append(reservation[1]);//NAZWISKO
-            sb.Append("',");
-            sb.Append(reservation[2]);//IDPOKOJU
-            sb.Append(",");
-            sb.Append(reservation[3]);//ILOŚĆ MIEJSC
-            sb.Append(",'");
-            sb.Append(reservation[4]);//NR TELEFONU
-            sb.Append("',");
-            sb.Append(reservation[5]);//ID PRACOWNIKA
-            sb.Append(");");
+            using (var db = new MountainHutContext()) {
+                db.Add(reservation);
+                db.SaveChanges();
+            }
 
-            string com = sb.ToString();
-            connection.Open();
-            SqlCommand command = new SqlCommand(com, connection);
-
-            command.ExecuteNonQuery();
-            connection.Close();
         }
 
         public int getRoomPrice(int id)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("Select Price FROM Rooms where RoomID = ");
-            sb.Append(id);
-            sb.Append(";");
+            using (var db = new MountainHutContext()) {
+                var test = db.Rooms
+                    .Where(r => r.RoomId == id)
+                    .Select(r => r.Price)
+                    .FirstOrDefault();
 
-            string com = sb.ToString();
-            connection.Open();
-            SqlCommand command = new SqlCommand(com, connection);
+                return test;
+            }
 
-            int result = (int)command.ExecuteScalar();
-            connection.Close();
-            return result;
+            
         }
 
-        public void removeReservation(string[] reservation)
+        public void removeReservation(Reservations reservation)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("DELETE FROM Reservations WHERE Date = '");
-            sb.Append(reservation[4]);
-            sb.Append("' AND Name = '");
-            sb.Append(reservation[1]);
-            sb.Append("' AND Surname = '");
-            sb.Append(reservation[2]);
-            sb.Append("' AND PhoneNumber = '");
-            sb.Append(reservation[3]);
-            sb.Append("' AND SlotsQuantity = ");
-            sb.Append(reservation[0]);
-            sb.Append(";");
+            using (var db = new MountainHutContext()) {
 
-            string com = sb.ToString();
-            connection.Open();
-            SqlCommand command = new SqlCommand(com, connection);
-            command.ExecuteNonQuery();
+                var test = db.Reservations
+                    .Where(r => r.Name == reservation.Name && r.Surname == reservation.Surname && r.Date == reservation.Date && r.PhoneNumber == reservation.PhoneNumber)
+                    .SingleOrDefault();
+                ;
+                db.Remove(test);
+                db.SaveChanges();
+            }
+            
+            
         }
 
         
